@@ -41,7 +41,8 @@
             let point = new cv.Point(maxPoint.x + templ.cols, maxPoint.y + templ.rows);
             cv.rectangle(src, maxPoint, point, color, 2, cv.LINE_8, 0);
             cv.imshow('result', src);
-            
+
+            templ.delete();
             src.delete();
             dst.delete();
             mask.delete();
