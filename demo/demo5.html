@@ -12,6 +12,7 @@
     <canvas id="result" width="512" height="512"></canvas>
     <canvas id="dst" width="512" height="512"></canvas>
     <script src="../lib/opencv.js" type="text/javascript"></script>
+    <script src="./tool.js"></script>
     <script>
         window.onload = function () {
 
@@ -22,6 +23,19 @@
             let templ = cv.imread($template);
 
             let dst = new cv.Mat();
+
+            //计算模版图像中的最小值
+            let rgbaPlanes = new cv.MatVector();
+            cv.split(templ, rgbaPlanes);
+            let rChannel = rgbaPlanes.get(0);
+            let rLoc = cv.minMaxLoc(rChannel);
+            let minR = getChannels(rChannel, rLoc.minLoc.y, rLoc.minLoc.x)[0]; //模版图像的最小R通过
+
+            let gChannel = rgbaPlanes.get(1);
+            let bChannel = rgbaPlanes.get(2);
+
+            //阀值化提高精度
+            //...
 
             /**
              *
@@ -51,7 +65,7 @@
 
             /**
              * cv.minMaxLoc(arr)
-             * 找出数组 arr 中的最大值和最小值，并返回它们的位置
+             * 找出数组 arr 中的最大值和最小值，并返回它们的位置（只可以用来处理单通道数组）
              */
             let position = cv.minMaxLoc(dst);
             let maxPoint = position.maxLoc;
