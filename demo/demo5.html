@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>图像匹配</title>
+    <title>模版匹配</title>
 </head>
+
 <body>
     <img id="whole" src="../img/lena.jpg" alt="">
     <img id="template" src="../img/lena-part.jpg" alt="">
     <canvas id="result" width="512" height="512"></canvas>
+    <canvas id="dst" width="512" height="512"></canvas>
     <script src="../lib/opencv.js" type="text/javascript"></script>
     <script>
-        window.onload = function(){
+        window.onload = function () {
 
             let $whole = document.querySelector('#whole');
             let src = cv.imread($whole);
@@ -19,9 +22,21 @@
             let templ = cv.imread($template);
 
             let dst = new cv.Mat();
-            let mask = new cv.Mat();
 
             /**
+             *
+             * cv.matchTemplate(src, templ, dst, method)
+             * 
+             * --------------------------
+             * 
+             * 参数说明：
+             * src 目标图像 尺寸 W/H
+             * templ 搜索的模版图像 尺寸 w/h
+             * dst 匹配结果 尺寸 (W-w)/(H-h)
+             * method 模版匹配方法
+             *
+             * --------------------------
+             *
              * opencv中模版匹配支持的比较方法有六种：
              *
              * cv.TM_SQDIFF 平方差匹配 匹配值越大，匹配越差；
@@ -32,21 +47,32 @@
              *
              * cv.TM_CCOEFF 相关性系数匹配方法，该方法使用源图像与其均值的差、模版与其均值的差二者之间的相关性进行匹配，正值表示匹配的结果较好，负值表示匹配的结果较差；匹配值越大，匹配效果越好；
              * cv.TM_CCOEFF_NORMED 归一化相关性系数匹配方法。
+             * 
              */
-            cv.matchTemplate(src, templ, dst, cv.TM_CCOEFF, mask);
+            cv.matchTemplate(src, templ, dst, cv.TM_CCOEFF_NORMED);
 
-            let result = cv.minMaxLoc(dst, mask);
-            let maxPoint = result.maxLoc;
+            /**
+             * cv.normalize(src, dst, a, b, normal_type)
+             * 根据 normal_type 的不同值，图像 src 将被规范化，或者以其他方式映射到 dst 的一个特定范围内
+             * --------------------------
+             * cv.NORM_MINMAX 表示把 src 映射到 [a,b] 的范围上
+             */
+            cv.normalize(dst, dst, 0, 1, cv.NORM_MINMAX)
+
+            let position = cv.minMaxLoc(dst);
+            let maxPoint = position.maxLoc;
             let color = new cv.Scalar(255, 0, 0, 255);
             let point = new cv.Point(maxPoint.x + templ.cols, maxPoint.y + templ.rows);
             cv.rectangle(src, maxPoint, point, color, 2, cv.LINE_8, 0);
             cv.imshow('result', src);
 
+            cv.imshow('dst', dst);
+
             templ.delete();
             src.delete();
             dst.delete();
-            mask.delete();
         }
     </script>
 </body>
+
 </html>
