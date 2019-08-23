@@ -49,6 +49,10 @@
              */
             cv.normalize(dst, dst, 0, 1, cv.NORM_MINMAX)
 
+            /**
+             * cv.minMaxLoc(arr)
+             * 找出数组 arr 中的最大值和最小值，并返回它们的位置
+             */
             let position = cv.minMaxLoc(dst);
             let maxPoint = position.maxLoc;
             let color = new cv.Scalar(255, 0, 0, 255);
