@@ -56,21 +56,21 @@
       cv.threshold(
         planes2.get(0),
         planes2.get(0),
-        minR,
+        minR - 1, //减1
         255,
         cv.THRESH_TOZERO
       )
       cv.threshold(
         planes2.get(1),
         planes2.get(1),
-        minG,
+        minG - 1,
         255,
         cv.THRESH_TOZERO
       )
       cv.threshold(
         planes2.get(2),
         planes2.get(2),
-        minB,
+        minB - 1,
         255,
         cv.THRESH_TOZERO
       )
