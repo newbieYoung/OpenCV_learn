@@ -7,11 +7,11 @@
 </head>
 
 <body>
-  <img id="whole" src="../img/lena.jpg" alt="" />
-  <img id="template" src="../img/lena-part.jpg" alt="" />
+  <img id="whole" src="../img/page-2.jpg" alt="" />
+  <img id="text-1" src="../img/page-2-text-1.png" alt="" />
+  <canvas id="threshold"></canvas>
   <canvas id="result"></canvas>
   <canvas id="dst"></canvas>
-  <canvas id="threshold"></canvas>
   <script src="../lib/opencv.js" type="text/javascript"></script>
   <script src="./tool.js"></script>
   <script>
@@ -19,62 +19,31 @@
       let $whole = document.querySelector('#whole')
       let src = cv.imread($whole)
 
-      let $template = document.querySelector('#template')
-      let templ = cv.imread($template)
+      let $text1 = document.querySelector('#text-1')
+      let text1 = cv.imread($text1)
 
       let dst = new cv.Mat()
 
       //计算模版图像中的最小值
-      let planes1 = new cv.MatVector()
-      cv.split(templ, planes1)
-      let rChannel = planes1.get(0)
-      let rLoc = cv.minMaxLoc(rChannel)
-      let minR = getChannels(rChannel, rLoc.minLoc.y, rLoc.minLoc.x)[0] //模版图像的最小R通道
-
-      let gChannel = planes1.get(1)
-      let gLoc = cv.minMaxLoc(gChannel)
-      let minG = getChannels(gChannel, gLoc.minLoc.y, gLoc.minLoc.x)[0] //模版图像的最小G通道
-
-      let bChannel = planes1.get(2)
-      let bLoc = cv.minMaxLoc(bChannel)
-      let minB = getChannels(bChannel, bLoc.minLoc.y, bLoc.minLoc.x)[0] //模版图像最小B通道
+      let text1MinMax = getMinMaxChannels(text1)
+      text1MinMax.mins[3] = 0; //alpha通道保持不变
+      console.log(text1MinMax);
 
       //过滤源图像
-      let planes2 = new cv.MatVector()
-      cv.split(src, planes2)
-      /**
-       * 阀值化
-       * threshold( src,dst, thresh, maxval, type )
-       * 参数说明：
-       * src 源图像
-       * dst 输出图像
-       * thresh 门限值
-       * maxval 最大值
-       * type 函数类型
-       * cv.THRESH_TOZERO 表示如果目标值大于门限值则取目标值否则取 0
-       */
-      cv.threshold(
-        planes2.get(0),
-        planes2.get(0),
-        minR - 1, //减1
-        255,
+      filterChannels(
+        src,
+        text1MinMax.mins,
+        text1MinMax.maxs,
         cv.THRESH_TOZERO
       )
-      cv.threshold(
-        planes2.get(1),
-        planes2.get(1),
-        minG - 1,
-        255,
+
+      filterChannels(
+        text1,
+        text1MinMax.mins,
+        text1MinMax.maxs,
         cv.THRESH_TOZERO
       )
-      cv.threshold(
-        planes2.get(2),
-        planes2.get(2),
-        minB - 1,
-        255,
-        cv.THRESH_TOZERO
-      )
-      cv.merge(planes2, src)
+      cv.imshow('threshold', text1)
 
       /**
        *
@@ -93,7 +62,7 @@
        * cv.TM_CCOEFF_NORMED 归一化相关性系数匹配方法。
        *
        */
-      cv.matchTemplate(src, templ, dst, cv.TM_CCOEFF_NORMED)
+      cv.matchTemplate(src, text1, dst, cv.TM_CCOEFF_NORMED)
 
       /**
        * cv.normalize(src, dst, a, b, normal_type)
@@ -110,8 +79,8 @@
       let maxPoint = position.maxLoc
       let color = new cv.Scalar(255, 0, 0, 255)
       let point = new cv.Point(
-        maxPoint.x + templ.cols,
-        maxPoint.y + templ.rows
+        maxPoint.x + text1.cols,
+        maxPoint.y + text1.rows
       )
 
       /**
@@ -128,7 +97,7 @@
       cv.imshow('result', src)
       cv.imshow('dst', dst)
 
-      templ.delete()
+      text1.delete()
       src.delete()
       dst.delete()
     }
