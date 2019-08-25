@@ -68,3 +68,20 @@ function filterChannels(mat, mins, maxs, type) {
 
   planes.delete();
 }
+
+/**
+ * 绘制边框
+ */
+function getContours(src) {
+  let dst = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
+  cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
+  cv.threshold(src, src, 180, 200, cv.THRESH_BINARY);
+  let contours = new cv.MatVector();
+  let hierarchy = new cv.Mat();
+  cv.findContours(src, contours, hierarchy, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE);
+  for (let i = 0; i < contours.size(); ++i) {
+    let color = new cv.Scalar(255, 255, 255);
+    cv.drawContours(dst, contours, i, color, 1, cv.LINE_8, hierarchy, 100);
+  }
+  return dst;
+}
