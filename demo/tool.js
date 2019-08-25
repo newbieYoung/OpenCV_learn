@@ -37,6 +37,48 @@ function getMinMaxChannels(mat) {
 }
 
 /**
+ * 获取图像中各通道的最小值和最大值
+ */
+function getMinMaxChannelsWithOutZero(mat) {
+  let mins = [];
+  let maxs = [];
+  let len = mat.channels();
+  let planes = new cv.MatVector()
+  cv.split(mat, planes)
+
+  for (let i = 0; i < len; i++) {
+    let channel = planes.get(i);
+    let min = channel.data[0];
+    let max = channel.data[0];
+    for (let j = 1; j < channel.data.length; j++) {
+      if (channel.data[j] < min && channel.data[j] > 0) {
+        min = channel.data[j];
+      }
+      if (channel.data[j] > max && channel.data[j] > 0) {
+        max = channel.data[j];
+      }
+    }
+    if (min > 0) {
+      mins.push(min);
+    } else {
+      mins.push(null)
+    }
+    if (max > 0) {
+      maxs.push(max);
+    } else {
+      maxs.push(null)
+    }
+  }
+
+  planes.delete();
+
+  return {
+    mins: mins,
+    maxs: maxs
+  };
+}
+
+/**
  * 过滤图像中的各通道
  */
 function filterChannels(mat, mins, maxs, type) {

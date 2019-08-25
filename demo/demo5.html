@@ -8,7 +8,7 @@
 
 <body>
   <img id="whole" src="../img/page-2.jpg" alt="" />
-  <img id="text-1" src="../img/page-2-text-1.png" alt="" />
+  <img id="text-1" src="../img/page-2-text-1-final.png" alt="" />
   <canvas id="threshold"></canvas>
   <canvas id="result"></canvas>
   <canvas id="dst"></canvas>
@@ -25,7 +25,7 @@
       let dst = new cv.Mat()
 
       //计算模版图像中的最小值
-      let text1MinMax = getMinMaxChannels(text1)
+      let text1MinMax = getMinMaxChannelsWithOutZero(text1)
       text1MinMax.mins[3] = 0; //alpha通道保持不变
       console.log(text1MinMax);
 
