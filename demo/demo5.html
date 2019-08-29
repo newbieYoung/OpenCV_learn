@@ -7,8 +7,8 @@
 </head>
 
 <body>
-  <img id="whole" src="../img/page-2.jpg" alt="" />
-  <img id="text-1" src="../img/page-2-text-1-final.png" alt="" />
+  <img id="whole" src="../img/lena.jpg" alt="" />
+  <img id="part" src="../img/lena-part.jpg" alt="" />
   <canvas id="threshold"></canvas>
   <canvas id="result"></canvas>
   <canvas id="dst"></canvas>
@@ -19,31 +19,10 @@
       let $whole = document.querySelector('#whole')
       let src = cv.imread($whole)
 
-      let $text1 = document.querySelector('#text-1')
-      let text1 = cv.imread($text1)
+      let $part = document.querySelector('#part')
+      let part = cv.imread($part)
 
       let dst = new cv.Mat()
-
-      //计算模版图像中的最小值
-      let text1MinMax = getMinMaxChannelsWithOutZero(text1)
-      text1MinMax.mins[3] = 0; //alpha通道保持不变
-      console.log(text1MinMax);
-
-      //过滤源图像
-      filterChannels(
-        src,
-        text1MinMax.mins,
-        text1MinMax.maxs,
-        cv.THRESH_TOZERO
-      )
-
-      filterChannels(
-        text1,
-        text1MinMax.mins,
-        text1MinMax.maxs,
-        cv.THRESH_TOZERO
-      )
-      cv.imshow('threshold', text1)
 
       /**
        *
@@ -62,7 +41,7 @@
        * cv.TM_CCOEFF_NORMED 归一化相关性系数匹配方法。
        *
        */
-      cv.matchTemplate(src, text1, dst, cv.TM_CCOEFF_NORMED)
+      cv.matchTemplate(src, part, dst, cv.TM_CCOEFF_NORMED)
 
       /**
        * cv.normalize(src, dst, a, b, normal_type)
@@ -79,8 +58,8 @@
       let maxPoint = position.maxLoc
       let color = new cv.Scalar(255, 0, 0, 255)
       let point = new cv.Point(
-        maxPoint.x + text1.cols,
-        maxPoint.y + text1.rows
+        maxPoint.x + part.cols,
+        maxPoint.y + part.rows
       )
 
       /**
@@ -97,7 +76,7 @@
       cv.imshow('result', src)
       cv.imshow('dst', dst)
 
-      text1.delete()
+      part.delete()
       src.delete()
       dst.delete()
     }

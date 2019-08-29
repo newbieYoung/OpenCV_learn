@@ -2,87 +2,79 @@
  * 获取某个位置的通道值
  */
 function getChannels(mat, row, col) {
-  let channel = [];
-  let len = mat.channels();
-  let no = row * mat.cols * len + col * len;
+  let channel = []
+  let len = mat.channels()
+  let no = row * mat.cols * len + col * len
   for (let i = 0; i < len; i++) {
-    channel.push(mat.data[no + i]);
+    channel.push(mat.data[no + i])
   }
-  return channel;
+  return channel
 }
 
 /**
  * 获取图像中各通道的最小值和最小值
  */
 function getMinMaxChannels(mat) {
-  let mins = [];
-  let maxs = [];
-  let len = mat.channels();
+  let mins = []
+  let maxs = []
+  let len = mat.channels()
   let planes = new cv.MatVector()
   cv.split(mat, planes)
 
   for (let i = 0; i < len; i++) {
-    let channel = planes.get(i);
+    let channel = planes.get(i)
     let loc = cv.minMaxLoc(channel)
-    mins.push(getChannels(channel, loc.minLoc.y, loc.minLoc.x)[0]);
-    maxs.push(getChannels(channel, loc.maxLoc.y, loc.maxLoc.x)[0]);
+    mins.push(getChannels(channel, loc.minLoc.y, loc.minLoc.x)[0])
+    maxs.push(getChannels(channel, loc.maxLoc.y, loc.maxLoc.x)[0])
   }
 
-  planes.delete();
+  planes.delete()
 
   return {
     mins: mins,
     maxs: maxs
-  };
+  }
 }
 
 /**
  * 获取图像中各通道的最小值和最大值
  */
 function getMinMaxChannelsWithOutZero(mat) {
-  let mins = [];
-  let maxs = [];
-  let len = mat.channels();
+  let mins = []
+  let maxs = []
+  let len = mat.channels()
   let planes = new cv.MatVector()
   cv.split(mat, planes)
 
   for (let i = 0; i < len; i++) {
-    let channel = planes.get(i);
-    let min = channel.data[0];
-    let max = channel.data[0];
+    let channel = planes.get(i)
+    let min = 255
+    let max = 255
     for (let j = 1; j < channel.data.length; j++) {
       if (channel.data[j] < min && channel.data[j] > 0) {
-        min = channel.data[j];
+        min = channel.data[j]
       }
       if (channel.data[j] > max && channel.data[j] > 0) {
-        max = channel.data[j];
+        max = channel.data[j]
       }
     }
-    if (min > 0) {
-      mins.push(min);
-    } else {
-      mins.push(null)
-    }
-    if (max > 0) {
-      maxs.push(max);
-    } else {
-      maxs.push(null)
-    }
+    mins.push(min)
+    maxs.push(max)
   }
 
-  planes.delete();
+  planes.delete()
 
   return {
     mins: mins,
     maxs: maxs
-  };
+  }
 }
 
 /**
  * 过滤图像中的各通道
  */
 function filterChannels(mat, mins, maxs, type) {
-  let len = mat.channels();
+  let len = mat.channels()
   let planes = new cv.MatVector()
   cv.split(mat, planes)
 
@@ -108,22 +100,28 @@ function filterChannels(mat, mins, maxs, type) {
   }
   cv.merge(planes, mat)
 
-  planes.delete();
+  planes.delete()
 }
 
 /**
  * 绘制边框
  */
 function getContours(src) {
-  let dst = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
-  cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
-  cv.threshold(src, src, 180, 200, cv.THRESH_BINARY);
-  let contours = new cv.MatVector();
-  let hierarchy = new cv.Mat();
-  cv.findContours(src, contours, hierarchy, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE);
+  let dst = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3)
+  cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0)
+  cv.threshold(src, src, 180, 200, cv.THRESH_BINARY)
+  let contours = new cv.MatVector()
+  let hierarchy = new cv.Mat()
+  cv.findContours(
+    src,
+    contours,
+    hierarchy,
+    cv.RETR_CCOMP,
+    cv.CHAIN_APPROX_SIMPLE
+  )
   for (let i = 0; i < contours.size(); ++i) {
-    let color = new cv.Scalar(255, 255, 255);
-    cv.drawContours(dst, contours, i, color, 1, cv.LINE_8, hierarchy, 100);
+    let color = new cv.Scalar(255, 255, 255)
+    cv.drawContours(dst, contours, i, color, 1, cv.LINE_8, hierarchy, 100)
   }
-  return dst;
+  return dst
 }
