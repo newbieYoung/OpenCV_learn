@@ -7,20 +7,20 @@
 </head>
 
 <body>
-    <img id="input1" src="../img/lena.jpg" alt="">
-    <canvas id="output1"></canvas>
+    <img id="input" src="../img/lena.jpg" alt="">
+    <canvas id="output"></canvas>
     <script src="../lib/opencv.js" type="text/javascript"></script>
     <script src="./tool.js"></script>
     <script>
         window.onload = function () {
-            var $img1 = document.querySelector('#input1');
-            var src1 = cv.imread($img1);
-            var dst1 = getContours(src1);
-            var $cvs1 = document.querySelector('#output1');
-            cv.imshow($cvs1, dst1);
+            var $input = document.querySelector('#input');
+            var src = cv.imread($input);
+            var dst = getContours(src);
+            var $output = document.querySelector('#output');
+            cv.imshow($output, dst);
 
-            src1.delete();
-            dst1.delete();
+            src.delete();
+            dst.delete();
         }
     </script>
 </body>
