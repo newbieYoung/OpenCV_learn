@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>形态学变换（腐蚀、膨胀、开运算、闭运算、顶帽、黑帽、形态梯度）</title>
+</head>
+
+<body>
+  <img id="input" src="../img/morph.png" alt="">
+  <canvas id="structuring"></canvas>
+  <canvas id="black"></canvas>
+  <canvas id="top"></canvas>
+  <canvas id="gradient"></canvas>
+  <canvas id="close"></canvas>
+  <canvas id="open"></canvas>
+  <canvas id="erode"></canvas>
+  <canvas id="dilate"></canvas>
+  <script src="../lib/opencv.js" type="text/javascript"></script>
+  <script src="./tool.js"></script>
+  <script>
+    window.onload = function () {
+      var $input = document.querySelector('#input');
+      var src = cv.imread($input);
+
+      //灰度
+      let gray = new cv.Mat();
+      cv.cvtColor(src, gray, cv.COLOR_RGBA2RGB);
+
+      //相关参数
+      let ksize = new cv.Size(5, 5);
+      let M = cv.Mat.ones(5, 5, cv.CV_8U);
+      let S = cv.getStructuringElement(cv.MORPH_CROSS, ksize);
+      let anchor = new cv.Point(-1, -1);
+
+      //结构化
+      let structuring = new cv.Mat();
+      cv.morphologyEx(gray, structuring, cv.MORPH_GRADIENT, S);
+      cv.imshow('structuring', structuring);
+
+      //黑帽
+      let black = new cv.Mat();
+      cv.morphologyEx(gray, black, cv.MORPH_TOPHAT, M);
+      cv.imshow('black', black);
+
+      //顶帽
+      let top = new cv.Mat();
+      cv.morphologyEx(gray, top, cv.MORPH_TOPHAT, M);
+      cv.imshow('top', top);
+
+      //形态梯度
+      let gradient = new cv.Mat();
+      cv.morphologyEx(gray, gradient, cv.MORPH_GRADIENT, M);
+      cv.imshow('gradient', gradient);
+
+      //闭运算
+      let close = new cv.Mat();
+      cv.morphologyEx(src, close, cv.MORPH_CLOSE, M);
+      cv.imshow('close', close);
+
+      //开运算
+      let open = new cv.Mat();
+      cv.morphologyEx(src, open, cv.MORPH_OPEN, M, anchor, 1,
+        cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+      cv.imshow('open', open);
+
+      //腐蚀
+      let erode = new cv.Mat();
+      cv.erode(src, erode, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+      cv.imshow('erode', erode);
+
+      //膨胀
+      let dilate = new cv.Mat();
+      cv.dilate(src, dilate, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+      cv.imshow('dilate', dilate);
+
+      src.delete();
+      erode.delete();
+      dilate.delete();
+      open.delete();
+      close.delete();
+      M.delete();
+    }
+  </script>
+</body>
+
+</html>
