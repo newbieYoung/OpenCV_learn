@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>膨胀腐蚀卷积计算</title>
+</head>
+
+<body>
+  <img id="img1" src="../img/img-1.png" alt="">
+  <img id="kernel" src="../img/kernel.png" alt="">
+  <canvas id="dst"></canvas>
+  <script src="../lib/opencv.js" type="text/javascript"></script>
+  <script src="./tool.js"></script>
+  <script>
+    window.onload = function () {
+      var $img1 = document.querySelector('#img1');
+      var img1 = cv.imread($img1)
+
+      var $kernel = document.querySelector('#kernel');
+      var kernel = cv.imread($kernel);
+
+      var dst = selfDilate(img1, kernel);
+      cv.imshow('dst', dst);
+    }
+  </script>
+</body>
+
+</html>

@@ -1,4 +1,100 @@
 /**
+ * 卷积
+ */
+function convolution(mat, kernel) {
+  let len = mat.channels();
+  let row1 = mat.rows;
+  let col1 = mat.cols;
+
+  let row2 = kernel.rows;
+  let col2 = kernel.cols;
+
+  /**
+   * 一般而言卷积核所有元素之和等于1；
+   * 如果不等于1，大于 1 时生成的图片亮度会增加，小于 1 时生成的图片亮度会降低。
+   */
+  let eles = [];
+  let sums = [0, 0, 0, 0];
+  for (let z = 0; z < len; z++) {
+    for (let i = 0; i < row2; i++) {
+      for (let j = 0; j < col2; j++) {
+        let no = i * row2 * len + j * len;
+        sums[z] += kernel.data[no + z];
+        eles[no + z] = kernel.data[no + z];
+      }
+    }
+  }
+  for (let z = 0; z < len; z++) {
+    for (let i = 0; i < row2; i++) {
+      for (let j = 0; j < col2; j++) {
+        let no = i * row2 * len + j * len;
+        eles[no + z] = eles[no + z] / sums[z];
+      }
+    }
+  }
+
+
+  //卷积核中心
+  let rowC = (row2 - 1) / 2;
+  let colC = (col2 - 1) / 2;
+
+  //卷积计算
+  let result = mat.clone();
+  for (let r = 0; r < row1; r++) {
+    for (let c = 0; c < col1; c++) {
+      let rowStart = r - rowC;
+      let colStart = c - colC;
+      let noCur = r * row1 * len + c * len;
+
+      for (let t = 0; t < len; t++) { //透明通道不参与计算
+        let sum = 0;
+        if (t == len - 1) { //透明通道不参与计算
+          sum = 255;
+        } else {
+          for (let i = 0; i < row2; i++) {
+            for (let j = 0; j < col2; j++) {
+              let r1 = rowStart + i;
+              let c1 = colStart + j;
+
+              let n1 = r1 * row1 * len + c1 * len;
+              let v1 = mat.data[n1 + t];
+              v1 = v1 == null ? 0 : v1; //不存在使用常量 0 代替
+
+              let r2 = row2 - 1 - i; //卷积核旋转180度
+              let c2 = col2 - 1 - j;
+
+              let n2 = r2 * row2 * len + c2 * len;
+              let v2 = eles[n2 + t];
+
+              sum += v1 * v2;
+            }
+          }
+        }
+        result.data[noCur + t] = sum;
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
+ * 膨胀
+ */
+function selfDilate(mat, kernel) {
+  let conv = convolution(mat, kernel); //卷积
+  console.log(mat.data);
+  console.log(conv.data);
+  for (let i = 0; i < conv.data.length; i++) {
+    if (conv.data[i] < mat.data[i]) {
+      conv.data[i] = mat.data[i];
+    }
+  }
+  console.log(conv.data);
+  return conv;
+}
+
+/**
  * 获取某个位置的通道值
  */
 function getChannels(mat, row, col) {
