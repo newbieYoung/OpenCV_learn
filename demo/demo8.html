@@ -53,23 +53,35 @@
       cv.morphologyEx(gray, gradient, cv.MORPH_GRADIENT, M);
       cv.imshow('gradient', gradient);
 
-      //闭运算
+      /**
+       * 闭运算
+       * 先膨胀后腐蚀，闭运算能够排除小的黑色区域。
+       */
       let close = new cv.Mat();
       cv.morphologyEx(src, close, cv.MORPH_CLOSE, M);
       cv.imshow('close', close);
 
-      //开运算
+      /**
+       * 开运算
+       * 先腐蚀后膨胀，用来消除小物体、在纤细点处分离物体、平滑较大物体的边界的同时并不明显改变其面积。
+       */
       let open = new cv.Mat();
       cv.morphologyEx(src, open, cv.MORPH_OPEN, M, anchor, 1,
         cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
       cv.imshow('open', open);
 
-      //腐蚀
+      /**
+       * 腐蚀
+       * 较亮的像素会被暗色腐蚀
+       */
       let erode = new cv.Mat();
       cv.erode(src, erode, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
       cv.imshow('erode', erode);
 
-      //膨胀
+      /**
+       * 膨胀
+       * 较亮的像素会膨胀
+       */
       let dilate = new cv.Mat();
       cv.dilate(src, dilate, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
       cv.imshow('dilate', dilate);
