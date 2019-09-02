@@ -8,8 +8,10 @@
 
 <body>
   <img id="img1" src="../img/img-1.png" alt="">
+  <img id="img2" src="../img/img-2.png" alt="">
   <img id="kernel" src="../img/kernel.png" alt="">
-  <canvas id="dst"></canvas>
+  <canvas id="dilate"></canvas>
+  <canvas id="erode"></canvas>
   <script src="../lib/opencv.js" type="text/javascript"></script>
   <script src="./tool.js"></script>
   <script>
@@ -17,11 +19,17 @@
       var $img1 = document.querySelector('#img1');
       var img1 = cv.imread($img1)
 
+      var $img2 = document.querySelector('#img2');
+      var img2 = cv.imread($img2)
+
       var $kernel = document.querySelector('#kernel');
       var kernel = cv.imread($kernel);
 
-      var dst = selfDilate(img1, kernel);
-      cv.imshow('dst', dst);
+      var dilate = selfDilate(img1, kernel);
+      cv.imshow('dilate', dilate);
+
+      var erode = selfErode(img2, kernel);
+      cv.imshow('erode', erode);
     }
   </script>
 </body>

@@ -83,14 +83,24 @@ function convolution(mat, kernel) {
  */
 function selfDilate(mat, kernel) {
   let conv = convolution(mat, kernel); //卷积
-  console.log(mat.data);
-  console.log(conv.data);
   for (let i = 0; i < conv.data.length; i++) {
-    if (conv.data[i] < mat.data[i]) {
+    if (conv.data[i] < mat.data[i]) { //取局部最大值
       conv.data[i] = mat.data[i];
     }
   }
-  console.log(conv.data);
+  return conv;
+}
+
+/**
+ * 腐蚀
+ */
+function selfErode(mat, kernel) {
+  let conv = convolution(mat, kernel); //卷积
+  for (let i = 0; i < conv.data.length; i++) {
+    if (conv.data[i] > mat.data[i]) { //取局部最小值
+      conv.data[i] = mat.data[i];
+    }
+  }
   return conv;
 }
 
