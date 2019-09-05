@@ -33,7 +33,6 @@ function convolution(mat, kernel) {
     }
   }
 
-
   //卷积核中心
   let rowC = (row2 - 1) / 2;
   let colC = (col2 - 1) / 2;
