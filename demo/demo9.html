@@ -25,7 +25,10 @@
       var $kernel = document.querySelector('#kernel');
       var kernel = cv.imread($kernel);
 
+      var d0 = window.performance.now();
       var dilate = selfDilate(img1, kernel);
+      var d1 = window.performance.now();
+      console.log('dilate ' + (d1 - d0) + 'ms');
       cv.imshow('dilate', dilate);
 
       var erode = selfErode(img2, kernel);
