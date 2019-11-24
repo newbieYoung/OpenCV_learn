@@ -4,35 +4,110 @@
 <head>
   <meta charset="UTF-8">
   <title>膨胀腐蚀卷积计算</title>
+  <style>
+    canvas {
+      margin-right: 5px;
+    }
+  </style>
 </head>
 
 <body>
+  <img id="ker" src="../img/kernel.png" alt="">
   <img id="img1" src="../img/img-1.png" alt="">
   <img id="img2" src="../img/img-2.png" alt="">
-  <img id="kernel" src="../img/kernel.png" alt="">
-  <canvas id="dilate"></canvas>
-  <canvas id="erode"></canvas>
-  <script src="../lib/opencv.js" type="text/javascript"></script>
-  <script src="./tool.js"></script>
+  <img id="img3" src="../img/img-3.jpg" alt="">
+  <script src="./simplecv.js"></script>
   <script>
+    function putCvData(conv, width, height) {
+      let canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      let ctx = canvas.getContext('2d');
+      let imageData = ctx.getImageData(0, 0, width, height);
+      for (let i = 0; i < conv.length; i++) {
+        imageData.data[i] = conv[i];
+      }
+      ctx.putImageData(imageData, 0, 0);
+      document.body.appendChild(canvas);
+    }
+
+    function getCvMat(imageId) {
+      let $img = document.querySelector('#' + imageId);
+      let width = $img.width;
+      let height = $img.height;
+
+      let $canvas = document.createElement('canvas');
+      $canvas.width = width;
+      $canvas.height = height
+      let ctx = $canvas.getContext('2d');
+      ctx.drawImage($img, 0, 0, width, height);
+
+      let dataImage = ctx.getImageData(0, 0, width, height);
+      let data = [];
+      for (let i = 0; i < dataImage.data.length; i++) {
+        data.push(dataImage.data[i]);
+      }
+
+      function putCvData(conv, width, height) {
+        let canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        let ctx = canvas.getContext('2d');
+        let imageData = ctx.getImageData(0, 0, width, height);
+        for (let i = 0; i < conv.length; i++) {
+          imageData.data[i] = conv[i];
+        }
+        ctx.putImageData(imageData, 0, 0);
+        document.body.appendChild(canvas);
+      }
+
+      return {
+        data: data,
+        width: dataImage.width,
+        height: dataImage.height
+      }
+    }
+
     window.onload = function () {
-      var $img1 = document.querySelector('#img1');
-      var img1 = cv.imread($img1)
-
-      var $img2 = document.querySelector('#img2');
-      var img2 = cv.imread($img2)
-
-      var $kernel = document.querySelector('#kernel');
-      var kernel = cv.imread($kernel);
-
-      var d0 = window.performance.now();
-      var dilate = selfDilate(img1, kernel);
-      var d1 = window.performance.now();
+      //膨胀操作
+      let ker = getCvMat('ker');
+      let img1 = getCvMat('img1');
+      let data1 = ker.data.concat(img1.data);
+      let d0 = window.performance.now();
+      let dilData = dilate(data1, ker.height, ker.width, img1.height, img1.width);
+      let d1 = window.performance.now();
       console.log('dilate ' + (d1 - d0) + 'ms');
-      cv.imshow('dilate', dilate);
+      putCvData(dilData, img1.width, img1.height);
 
-      var erode = selfErode(img2, kernel);
-      cv.imshow('erode', erode);
+      //腐蚀操作
+      let img2 = getCvMat('img2');
+      let data2 = ker.data.concat(img2.data);
+      let e0 = window.performance.now();
+      let eroData = erode(data2, ker.height, ker.width, img2.height, img2.width);
+      let e1 = window.performance.now();
+      console.log('erode ' + (e1 - e0) + 'ms');
+      putCvData(eroData, img2.width, img2.height);
+
+      /**
+       * 浮雕
+       * [
+       * -2,-1,0,
+       * -1,1,1,
+       * 0,1,2
+       * ]
+       */
+      let kerRelievo = [
+        -2, -2, -2, 255, -1, -1, -1, 255, 0, 0, 0, 255,
+        -1, -1, -1, 255, 1, 1, 1, 255, 1, 1, 1, 255,
+        0, 0, 0, 255, 1, 1, 1, 255, 2, 2, 2, 255
+      ]
+      let img3 = getCvMat('img3');
+      let data3 = kerRelievo.concat(img3.data);
+      let r0 = window.performance.now();
+      let relData = convolution(data3, 3, 3, img3.height, img3.width);
+      let r1 = window.performance.now();
+      console.log('erode ' + (r1 - r0) + 'ms');
+      putCvData(relData, img3.width, img3.height);
     }
   </script>
 </body>
