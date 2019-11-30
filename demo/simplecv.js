@@ -50,8 +50,8 @@ function convolution(data, kerRows, kerCols, matRows, matCols) {
   //卷积计算
   let result = new Array(matLen);
   for (let r = 0; r < matRows; r++) {
+    let rs = r - cRow;
     for (let c = 0; c < matCols; c++) {
-      let rs = r - cRow;
       let cs = c - cCol;
       let noCur = (r * matCols + c) * len;
       for (let z = 0; z < len; z++) {
@@ -61,8 +61,8 @@ function convolution(data, kerRows, kerCols, matRows, matCols) {
           sum = matMat[noCur + z];
         } else {
           for (let i = 0; i < kerRows; i++) {
+            let r1 = rs + i;
             for (let j = 0; j < kerCols; j++) {
-              let r1 = rs + i;
               let c1 = cs + j;
 
               let n1 = (r1 * matCols + c1) * len;
