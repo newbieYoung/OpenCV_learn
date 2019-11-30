@@ -1,87 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>模版匹配</title>
-  </head>
 
-  <body>
-    <img id="whole" src="../img/lena.jpg" alt="" />
-    <img id="part" src="../img/lena-part.jpg" alt="" />
-    <canvas id="threshold"></canvas>
-    <canvas id="result"></canvas>
-    <canvas id="dst"></canvas>
-    <script src="../lib/opencv.js" type="text/javascript"></script>
-    <script src="./tool.js"></script>
-    <script>
-      window.onload = function() {
-        let $whole = document.querySelector("#whole");
-        let src = cv.imread($whole);
+<head>
+  <meta charset="UTF-8" />
+  <title>模版匹配</title>
+</head>
 
-        let $part = document.querySelector("#part");
-        let part = cv.imread($part);
+<body>
+  <img id="whole" src="../img/lena.jpg" alt="" />
+  <img id="part" src="../img/lena-part.jpg" alt="" />
+  <canvas id="threshold"></canvas>
+  <canvas id="result"></canvas>
+  <canvas id="dst"></canvas>
+  <script src="../lib/opencv.js" type="text/javascript"></script>
+  <script src="./tool.js"></script>
+  <script>
+    window.onload = function () {
+      let $whole = document.querySelector("#whole");
+      let src = cv.imread($whole);
 
-        let dst = new cv.Mat();
+      let $part = document.querySelector("#part");
+      let part = cv.imread($part);
 
-        /**
-         *
-         * cv.matchTemplate(src, templ, dst, method)
-         * src 源图像 尺寸 W/H
-         * templ 模版图像 尺寸 w/h
-         * dst 匹配结果 尺寸 (W-w+1)/(H-h+1)
-         * method 模版匹配方法
-         *
-         * opencv中模版匹配支持的比较方法有六种：
-         * cv.TM_SQDIFF 平方差匹配 匹配值越大，匹配越差；
-         * cv.TM_SQDIFF_NORMED 标准平方差匹配；
-         * cv.TM_CCORR 相关性匹配 该方法使用源图像与模版图像的卷积结果进行匹配，匹配值越大结果越好；
-         * cv.TM_CCORR_NORMED 归一化相关性匹配；
-         * cv.TM_CCOEFF 相关性系数匹配方法，该方法使用源图像与其均值的差、模版与其均值的差二者之间的相关性进行匹配，正值表示匹配的结果较好，负值表示匹配的结果较差；匹配值越大，匹配效果越好；
-         * cv.TM_CCOEFF_NORMED 归一化相关性系数匹配方法。
-         *
-         */
-        let t0 = window.performance.now();
-        cv.matchTemplate(src, part, dst, cv.TM_CCOEFF_NORMED);
+      let dst = new cv.Mat();
 
-        /**
-         * cv.normalize(src, dst, a, b, normal_type)
-         * 根据 normal_type 的不同值，图像 src 将被规范化，或者以其他方式映射到 dst 的一个特定范围内
-         * cv.NORM_MINMAX 表示把 src 映射到 [a,b] 的范围上
-         */
-        cv.normalize(dst, dst, 0, 1, cv.NORM_MINMAX);
-        let t1 = window.performance.now();
-        console.log(t1 - t0 + "ms");
+      /**
+       *
+       * cv.matchTemplate(src, templ, dst, method)
+       * src 源图像 尺寸 W/H
+       * templ 模版图像 尺寸 w/h
+       * dst 匹配结果 尺寸 (W-w+1)/(H-h+1)
+       * method 模版匹配方法
+       *
+       * opencv中模版匹配支持的比较方法有六种：
+       * cv.TM_SQDIFF 平方差匹配 匹配值越大，匹配越差；
+       * cv.TM_SQDIFF_NORMED 标准平方差匹配；
+       * cv.TM_CCORR 相关性匹配 该方法使用源图像与模版图像的卷积结果进行匹配，匹配值越大结果越好；
+       * cv.TM_CCORR_NORMED 归一化相关性匹配；
+       * cv.TM_CCOEFF 相关性系数匹配方法，该方法使用源图像与其均值的差、模版与其均值的差二者之间的相关性进行匹配，正值表示匹配的结果较好，负值表示匹配的结果较差；匹配值越大，匹配效果越好；
+       * cv.TM_CCOEFF_NORMED 归一化相关性系数匹配方法。
+       *
+       */
+      let t0 = window.performance.now();
+      cv.matchTemplate(src, part, dst, cv.TM_CCOEFF_NORMED);
 
-        /**
-         * cv.minMaxLoc(arr)
-         * 找出数组 arr 中的最大值和最小值，并返回它们的位置（只可以用来处理单通道数组）
-         */
-        let position = cv.minMaxLoc(dst);
-        let maxPoint = position.maxLoc;
-        let color = new cv.Scalar(255, 0, 0, 255);
-        let point = new cv.Point(
-          maxPoint.x + part.cols,
-          maxPoint.y + part.rows
-        );
+      /**
+       * cv.normalize(src, dst, a, b, normal_type)
+       * 根据 normal_type 的不同值，图像 src 将被规范化，或者以其他方式映射到 dst 的一个特定范围内
+       * cv.NORM_MINMAX 表示把 src 映射到 [a,b] 的范围上
+       */
+      cv.normalize(dst, dst, 0, 1, cv.NORM_MINMAX);
+      let t1 = window.performance.now();
+      console.log(t1 - t0 + "ms");
 
-        /**
-         * 绘制矩形
-         * cv.rectangle(src, p1, p2, color, line_width, line_type);
-         * src 源图像
-         * p1 矩形对角线顶点1
-         * p2 矩形对角线顶点2
-         * color 线条颜色
-         * line_width 线条宽度
-         * line_type 线条类型 cv.LINE_8 8连通线条，较为平滑不会走样
-         */
-        cv.rectangle(src, maxPoint, point, color, 1, cv.LINE_8);
-        cv.imshow("result", src);
-        cv.imshow("dst", dst);
+      /**
+       * cv.minMaxLoc(arr)
+       * 找出数组 arr 中的最大值和最小值，并返回它们的位置（只可以用来处理单通道数组）
+       */
+      let position = cv.minMaxLoc(dst);
+      let maxPoint = position.maxLoc;
+      let color = new cv.Scalar(255, 0, 0, 255);
+      let point = new cv.Point(
+        maxPoint.x + part.cols,
+        maxPoint.y + part.rows
+      );
 
-        part.delete();
-        src.delete();
-        dst.delete();
-      };
-    </script>
-  </body>
+      /**
+       * 绘制矩形
+       * cv.rectangle(src, p1, p2, color, line_width, line_type);
+       * src 源图像
+       * p1 矩形对角线顶点1
+       * p2 矩形对角线顶点2
+       * color 线条颜色
+       * line_width 线条宽度
+       * line_type 线条类型 cv.LINE_8 8连通线条，较为平滑不会走样
+       */
+      cv.rectangle(src, maxPoint, point, color, 1, cv.LINE_8);
+      cv.imshow("result", src);
+      cv.imshow("dst", dst);
+
+      part.delete();
+      src.delete();
+      dst.delete();
+    };
+  </script>
+</body>
+
 </html>
