@@ -48,19 +48,6 @@
         data.push(dataImage.data[i]);
       }
 
-      function putCvData(conv, width, height) {
-        let canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        let ctx = canvas.getContext('2d');
-        let imageData = ctx.getImageData(0, 0, width, height);
-        for (let i = 0; i < conv.length; i++) {
-          imageData.data[i] = conv[i];
-        }
-        ctx.putImageData(imageData, 0, 0);
-        document.body.appendChild(canvas);
-      }
-
       return {
         data: data,
         width: dataImage.width,
