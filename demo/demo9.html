@@ -15,7 +15,7 @@
   <img id="ker" src="../img/kernel.png" alt="">
   <img id="img1" src="../img/img-1.png" alt="">
   <img id="img2" src="../img/img-2.png" alt="">
-  <img id="img3" src="../img/lena-part.jpg" alt="">
+  <img id="img3" src="../img/lena.jpg" alt="">
   <script src="./simplecv.js"></script>
   <script>
     function putCvData(conv, width, height) {
@@ -94,6 +94,7 @@
       let relData = convolution(data3, 3, 3, img3.height, img3.width);
       let r1 = window.performance.now();
       console.log('relievo ' + (r1 - r0) + 'ms');
+      console.log(relData);
       putCvData(relData, img3.width, img3.height);
     }
   </script>
