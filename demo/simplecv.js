@@ -28,7 +28,7 @@ function convolution(data, kerRows, kerCols, matRows, matCols) {
   for (let z = 0; z < len; z++) {
     for (let i = 0; i < kerRows; i++) {
       for (let j = 0; j < kerCols; j++) {
-        let no = (i * kerCols  + j) * len;
+        let no = (i * kerCols + j) * len;
         sums[z] += kerMat[no + z];
         eles[no + z] = kerMat[no + z];
       }
@@ -37,7 +37,7 @@ function convolution(data, kerRows, kerCols, matRows, matCols) {
   for (let z = 0; z < len; z++) {
     for (let i = 0; i < kerRows; i++) {
       for (let j = 0; j < kerCols; j++) {
-        let no = (i * kerCols  + j) * len;
+        let no = (i * kerCols + j) * len;
         eles[no + z] = eles[no + z] / sums[z];
       }
     }
@@ -67,7 +67,7 @@ function convolution(data, kerRows, kerCols, matRows, matCols) {
 
               let n1 = (r1 * matCols + c1) * len;
               let v1 = 0; //超出范围使用常量0代替
-              if (n1 + z >= 0 && n1 + z <= matLen - 1) {
+              if (r1 >= 0 && r1 < matRows && c1 >= 0 && c1 < matCols) {
                 v1 = matMat[n1 + z];
               }
 
@@ -113,7 +113,7 @@ function erode(data, kerRows, kerCols, matRows, matCols) {
 /**
  * 膨胀
  */
-function dilate(data, kerRows, kerCols, matRows, matCols ) {
+function dilate(data, kerRows, kerCols, matRows, matCols) {
   let len = 4;
   let kerLen = kerRows * kerCols * len;
   let matLen = matRows * matCols * len;
