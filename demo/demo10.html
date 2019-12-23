@@ -11,7 +11,7 @@
 <body>
   <img id="input" src="../img/lena.jpg" alt="">
   <canvas id="gray"></canvas>
-  <canvas id="integral"></canvas>
+  <canvas id="sum"></canvas>
   <script src="../lib/opencv.js" type="text/javascript"></script>
   <script>
     window.onload = function () {
@@ -22,11 +22,11 @@
       var $gray = document.querySelector('#gray');
       cv.imshow($gray, gray);
 
-      var integral = new cv.Mat();
-      var $integral = document.querySelector('#integral');
-      cv.integral(gray, integral, cv.CV_32F); //计算积分图
-      cv.normalize(integral, integral, 0, 1, cv.NORM_MINMAX); //归一化，方便显示
-      cv.imshow($integral, integral);
+      var sum = new cv.Mat();
+      var $sum = document.querySelector('#sum');
+      cv.integral(gray, sum, cv.CV_32F); //计算积分图
+      cv.normalize(sum, sum, 0, 1, cv.NORM_MINMAX); //归一化，方便显示
+      cv.imshow($sum, sum);
     }
   </script>
 </body>
