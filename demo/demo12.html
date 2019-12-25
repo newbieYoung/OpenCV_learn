@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>快速傅里叶变换求卷积</title>
+</head>
+<body>
+  <script src="./complex.js"></script>
+  <script src="./fft.js"></script>
+  <script src="./simplecv.js"></script>
+  <script>
+    window.onload = function(){
+      var f = [0,255,0, 255,255,255, 0,255,0];
+      var g = [0,0,0,0,0, 0,0,0,0,0, 0,255,255,0,0, 0,0,255,0,0, 0,0,0,0,0];
+      var data = f.concat(g);
+      var conv = convolution(data, 3, 3, 5, 5, 1); // 朴素卷积
+      console.log(conv);
+    }
+  </script>
+</body>
+</html>
