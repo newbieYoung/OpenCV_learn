@@ -57,23 +57,23 @@
 
     window.onload = function () {
       //膨胀操作
-      // let ker = getCvMat('ker');
-      // let img1 = getCvMat('img1');
-      // let data1 = ker.data.concat(img1.data);
-      // let d0 = window.performance.now();
-      // let dilData = dilate(data1, ker.height, ker.width, img1.height, img1.width);
-      // let d1 = window.performance.now();
-      // console.log('dilate ' + (d1 - d0) + 'ms');
-      // putCvData(dilData, img1.width, img1.height);
+      let ker = getCvMat('ker');
+      let img1 = getCvMat('img1');
+      let data1 = ker.data.concat(img1.data);
+      let d0 = window.performance.now();
+      let dilData = dilate(data1, ker.height, ker.width, img1.height, img1.width, 4);
+      let d1 = window.performance.now();
+      console.log('dilate ' + (d1 - d0) + 'ms');
+      putCvData(dilData, img1.width, img1.height);
 
       //腐蚀操作
-      // let img2 = getCvMat('img2');
-      // let data2 = ker.data.concat(img2.data);
-      // let e0 = window.performance.now();
-      // let eroData = erode(data2, ker.height, ker.width, img2.height, img2.width);
-      // let e1 = window.performance.now();
-      // console.log('erode ' + (e1 - e0) + 'ms');
-      // putCvData(eroData, img2.width, img2.height);
+      let img2 = getCvMat('img2');
+      let data2 = ker.data.concat(img2.data);
+      let e0 = window.performance.now();
+      let eroData = erode(data2, ker.height, ker.width, img2.height, img2.width, 4);
+      let e1 = window.performance.now();
+      console.log('erode ' + (e1 - e0) + 'ms');
+      putCvData(eroData, img2.width, img2.height);
 
       /**
        * 浮雕
