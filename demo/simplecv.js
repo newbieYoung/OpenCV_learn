@@ -56,7 +56,7 @@ function convolution(data, kerRows, kerCols, matRows, matCols, len) {
       let noCur = (r * matCols + c) * len;
       for (let z = 0; z < len; z++) {
         let sum = 0;
-        if (z == len - 1) {
+        if (z == len - 1 && len >= 4) {
           //透明通道不参与计算
           sum = matMat[noCur + z];
         } else {
