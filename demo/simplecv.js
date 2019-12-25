@@ -5,11 +5,11 @@
  * kerCols  卷积核列数
  * matRows  矩阵行数
  * matCols  矩阵列数
+ * len      颜色通道数
  * ----
  * 对于图片来说行数即高度、列数即宽度
  */
-function convolution(data, kerRows, kerCols, matRows, matCols) {
-  let len = 4;
+function convolution(data, kerRows, kerCols, matRows, matCols, len) {
   //拆分矩阵数据
   let kerLen = kerRows * kerCols * len;
   let kerMat = data.slice(0, kerLen);
@@ -98,7 +98,7 @@ function erode(data, kerRows, kerCols, matRows, matCols) {
   let matLen = matRows * matCols * len;
   let matMat = data.slice(kerLen, matLen + kerLen);
 
-  let conv = convolution(data, kerRows, kerCols, matRows, matCols); //卷积
+  let conv = convolution(data, kerRows, kerCols, matRows, matCols, 4); //卷积
 
   for (let i = 0; i < conv.length; i++) {
     if (conv[i] > matMat[i]) {
@@ -119,7 +119,7 @@ function dilate(data, kerRows, kerCols, matRows, matCols) {
   let matLen = matRows * matCols * len;
   let matMat = data.slice(kerLen, matLen + kerLen);
 
-  let conv = convolution(data, kerRows, kerCols, matRows, matCols); //卷积
+  let conv = convolution(data, kerRows, kerCols, matRows, matCols, 4); //卷积
 
   for (let i = 0; i < conv.length; i++) {
     if (conv[i] < matMat[i]) {

@@ -92,7 +92,7 @@
       console.log(img3.data);
       let data3 = kerRelievo.concat(img3.data);
       let r0 = window.performance.now();
-      let relData = convolution(data3, 3, 3, img3.height, img3.width);
+      let relData = convolution(data3, 3, 3, img3.height, img3.width, 4);
       let r1 = window.performance.now();
       console.log('relievo ' + (r1 - r0) + 'ms');
       putCvData(relData, img3.width, img3.height);
