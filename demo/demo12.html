@@ -11,6 +11,21 @@
   <script src="./fft.js"></script>
   <script src="./simplecv.js"></script>
   <script>
+    //填充卷积核
+    function fillKernal(ker,kW,kH,dW,dH){
+      var newKer = [];
+      for(var i=0;i<dH;i++){ // 行数
+        for(var j=0;j<dW;j++){ // 列数
+          var no = i*kW+j;
+          if(i>=kH || j>=kW){
+            newKer.push(0);
+          }else{
+            newKer.push(ker[no]);
+          }
+        }
+      }
+      return newKer;
+    }
     window.onload = function(){
       //var f = [0,255,0, 255,255,255, 0,255,0]; // 3*3
       var f = [0,0.2,0, 0.2,0.2,0.2, 0,0.2,0]; // 卷积核
@@ -32,14 +47,17 @@
       /**
        * 一维数据填充直接在后边补 0 就好了，二维数据填充需要把两个卷积矩阵逐行逐列填补到相同大小，然后 fft 中一直再二分，因此总数据还需要填充为 2 的指数幂
        */
-      var newF = [0,0.2,0,0,0, 0.2,0.2,0.2,0,0, 0,0.2,0,0,0, 0,0,0,0,0, 0,0,0,0,0]
-      var newG = [0,0,0,0,0, 0,0,0,0,0, 0,255,255,0,0, 0,0,255,0,0, 0,0,0,0,0]
+      // var newF = [0,0.2,0,0,0, 0.2,0.2,0.2,0,0, 0,0.2,0,0,0, 0,0,0,0,0, 0,0,0,0,0]
+      var newF = fillKernal(f,fWidth,fHeight,gWidth,gHeight)
+      var newG = [];
       for(var i=0;i<N;i++){
         if(newF[i] == null){
           newF.push(0);
         }
-        if(newG[i] == null){
+        if(g[i] == null){
           newG.push(0);
+        }else{
+          newG.push(g[i]);
         }
       }
 
