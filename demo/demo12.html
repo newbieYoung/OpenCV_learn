@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>快速傅里叶变换求卷积</title>
+  <title>快速傅里叶变换求二维卷积</title>
 </head>
 <body>
   <script src="./complex.js"></script>
@@ -12,11 +12,49 @@
   <script src="./simplecv.js"></script>
   <script>
     window.onload = function(){
-      var f = [0,255,0, 255,255,255, 0,255,0];
-      var g = [0,0,0,0,0, 0,0,0,0,0, 0,255,255,0,0, 0,0,255,0,0, 0,0,0,0,0];
+      //var f = [0,255,0, 255,255,255, 0,255,0]; // 3*3
+      var f = [0,0.2,0, 0.2,0.2,0.2, 0,0.2,0]; // 卷积核
+      var fWidth = 3;
+      var fHeight = 3;
+
+      var g = [0,0,0,0,0, 0,0,0,0,0, 0,255,255,0,0, 0,0,255,0,0, 0,0,0,0,0]; // 5*5
+      var gWidth = 5;
+      var gHeight = 5;
+
       var data = f.concat(g);
-      var conv = convolution(data, 3, 3, 5, 5, 1); // 朴素卷积
+      var conv = convolution(data, fWidth, fHeight, gWidth, gHeight, 1); // 朴素卷积
       console.log(conv);
+
+      var n = Math.max(f.length, g.length);
+      var N = Math.pow(2,parseInt(Math.log2(n))+1) // 大于最大长度的最小2的指数幂
+      console.log(N);
+
+      // 扩充
+      var newF = [0,0.2,0,0,0, 0.2,0.2,0.2,0,0, 0,0.2,0,0,0, 0,0,0,0,0, 0,0,0,0,0]
+      var newG = [0,0,0,0,0, 0,0,0,0,0, 0,255,255,0,0, 0,0,255,0,0, 0,0,0,0,0]
+      for(var i=0;i<N;i++){
+        if(newF[i] == null){
+          newF.push(0);
+        }
+        if(newG[i] == null){
+          newG.push(0);
+        }
+      }
+
+      // 快速傅立叶变换
+      var a = cfft(newF);
+      var b = cfft(newG);
+
+      // 相乘
+      var c = [];
+      for(var i=0;i<N;i++){
+        var dst = new Complex();
+        a[i].mul(b[i],dst)
+        c.push(dst);
+      }
+
+      // 逆变换
+      console.log(icfft(c))
     }
   </script>
 </body>
