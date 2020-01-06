@@ -17,6 +17,7 @@
 
       let dst = new cv.Mat();
       let M = cv.Mat.eye(3, 3, cv.CV_32FC1);
+      console.log(M.data32F);
       let anchor = new cv.Point(-1, -1); //参考点默认值，即会设参考点为核中心，如果定义了参考点，核大小可以是偶数，否则只能是奇数
 
       /**
