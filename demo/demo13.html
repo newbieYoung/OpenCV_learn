@@ -7,7 +7,7 @@
   <title>卷积 filter2D</title>
 </head>
 <body>
-  <img id="img" src="../img/lena.jpg" alt="">
+  <img id="img" src="../img/img-3.jpg" alt="">
   <canvas id="dst"></canvas>
   <script src="../lib/opencv.js" type="text/javascript"></script>
   <script>
@@ -16,7 +16,7 @@
       let src = cv.imread($src);
 
       let dst = new cv.Mat();
-      let M = cv.Mat.eye(3, 3, cv.CV_32FC1);
+      let M = new cv.matFromArray(3, 3, cv.CV_32FC1, [-2,-1,0,-1,1,1,0,1,2]); // 根据数据创建 cvMat
       console.log(M.data32F);
       let anchor = new cv.Point(-1, -1); //参考点默认值，即会设参考点为核中心，如果定义了参考点，核大小可以是偶数，否则只能是奇数
 
@@ -24,7 +24,10 @@
        * 卷积边界
        * cv.BORDER_DEFAULT 默认自动填充图像边界（效果像是映像一样）
        */
+      let t0 = window.performance.now();
       cv.filter2D(src, dst, cv.CV_8U, M, anchor, 0, cv.BORDER_DEFAULT); 
+      let t1 = window.performance.now();
+      console.log(t1-t0);
       cv.imshow('dst', dst);
     }
   </script>
